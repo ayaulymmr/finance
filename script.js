@@ -1,5 +1,5 @@
 // Singleton Pattern for Budget Management
-const BudgetManager = (function() {
+const BudgetManager = (function () {
     let instance;
     let budget = 0;
     let totalExpenses = 0;
@@ -13,7 +13,7 @@ const BudgetManager = (function() {
             addExpense(amount) {
                 totalExpenses += amount;
                 this.updateRemainingBudget();
-                this.notifyObservers(); // Notify observers of the change
+                this.notifyObservers();
             },
             updateRemainingBudget() {
                 const remaining = budget - totalExpenses;
@@ -31,13 +31,13 @@ const BudgetManager = (function() {
                 this.observers.push(observer);
             },
             notifyObservers() {
-                this.observers.forEach(observer => observer.update(budget, totalExpenses));
+                this.observers.forEach(observer => observer.update(totalExpenses, budget));
             }
         };
     }
 
     return {
-        getInstance: function() {
+        getInstance: function () {
             if (!instance) {
                 instance = createInstance();
             }
@@ -48,64 +48,120 @@ const BudgetManager = (function() {
 
 const budgetManager = BudgetManager.getInstance();
 
-// Factory Method for creating different types of expenses
+// Observer Pattern for Expense Tracking
+class ExpenseObserver {
+    update(totalExpenses, budget) {
+        console.log(`Updated Expenses: $${totalExpenses}, Remaining Budget: $${budget - totalExpenses}`);
+    }
+}
+
+// Add Observer
+const expenseObserver = new ExpenseObserver();
+budgetManager.subscribe(expenseObserver);
+
+// Factory Method Pattern for Expense Creation
 class Expense {
     constructor(name, amount) {
         this.name = name;
         this.amount = amount;
     }
-}
 
-class FixedExpense extends Expense {
-    constructor(name, amount) {
-        super(name, amount);
-        this.type = 'Fixed';
+    display() {
+        return `${this.name}: $${this.amount.toFixed(2)}`;
     }
 }
 
-class VariableExpense extends Expense {
-    constructor(name, amount) {
-        super(name, amount);
-        this.type = 'Variable';
+// Adapter Pattern for legacy expense data format
+class LegacyExpense {
+    constructor(data) {
+        this.data = data;
+    }
+
+    getName() {
+        return this.data.expenseName;
+    }
+
+    getAmount() {
+        return this.data.amountSpent;
     }
 }
 
-// Event listener for adding an expense
-document.getElementById('add-expense').addEventListener('click', function() {
-    const expenseName = document.getElementById('expense-name').value;
-    const expenseAmount = parseFloat(document.getElementById('expense-amount').value);
-    const expenseType = document.querySelector('input[name="expense-type"]:checked').value;
-
-    let expense;
-    if (expenseType === 'fixed') {
-        expense = new FixedExpense(expenseName, expenseAmount);
-    } else {
-        expense = new VariableExpense(expenseName, expenseAmount);
+class ExpenseAdapter {
+    constructor(legacyExpense) {
+        this.legacyExpense = legacyExpense;
     }
 
-    if (expense.name && !isNaN(expense.amount)) {
+    display() {
+        return `${this.legacyExpense.getName()}: $${this.legacyExpense.getAmount().toFixed(2)}`;
+    }
+}
+
+// Facade Pattern for Simplified Interface
+class FinanceFacade {
+    constructor() {
+        this.budgetManager = BudgetManager.getInstance();
+        this.goals = [];
+    }
+
+    setBudget(amount) {
+        this.budgetManager.setBudget(amount);
+        document.getElementById('current-budget').innerText = amount;
+    }
+
+    addExpense(name, amount) {
+        const expense = new Expense(name, amount);
         const expenseList = document.getElementById('expense-list');
         const li = document.createElement('li');
-        li.innerText = `${expense.type} Expense - ${expense.name}: $${expense.amount.toFixed(2)}`;
+        li.innerText = expense.display();
         expenseList.appendChild(li);
+        this.budgetManager.addExpense(amount);
+    }
 
-        budgetManager.addExpense(expense.amount);
+    setFinancialGoal(name, amount) {
+        this.goals.push({ name, amount });
+        this.displayGoals();
+    }
+
+    displayGoals() {
+        const goalList = document.getElementById('goal-list');
+        goalList.innerHTML = ''; // Clear previous goals
+        this.goals.forEach(goal => {
+            const tr = document.createElement('tr');
+            const goalNameTd = document.createElement('td');
+            const goalAmountTd = document.createElement('td');
+            goalNameTd.innerText = goal.name;
+            goalAmountTd.innerText = `$${goal.amount.toFixed(2)}`;
+            tr.appendChild(goalNameTd);
+            tr.appendChild(goalAmountTd);
+            goalList.appendChild(tr);
+        });
+    }
+}
+
+const financeFacade = new FinanceFacade();
+
+// Event listener for adding an expense
+document.getElementById('add-expense').addEventListener('click', function () {
+    const expenseName = document.getElementById('expense-name').value;
+    const expenseAmount = parseFloat(document.getElementById('expense-amount').value);
+
+    if (expenseName && !isNaN(expenseAmount) && expenseAmount > 0) {
+        financeFacade.addExpense(expenseName, expenseAmount);
 
         // Clear input fields
         document.getElementById('expense-name').value = '';
         document.getElementById('expense-amount').value = '';
     } else {
-        alert('Please enter valid expense name and amount.');
+        alert('Please enter a valid expense name and a positive amount.');
     }
 });
 
 // Event listener for setting the budget
-document.getElementById('set-budget').addEventListener('click', function() {
+document.getElementById('set-budget').addEventListener('click', function () {
     const budgetAmount = parseFloat(document.getElementById('budget-amount').value);
 
-    if (!isNaN(budgetAmount)) {
-        budgetManager.setBudget(budgetAmount);
-        document.getElementById('current-budget').innerText = budgetAmount;
+    if (!isNaN(budgetAmount) && budgetAmount > 0) {
+        financeFacade.setBudget(budgetAmount);
 
         // Clear input field
         document.getElementById('budget-amount').value = '';
@@ -114,17 +170,13 @@ document.getElementById('set-budget').addEventListener('click', function() {
     }
 });
 
-// Financial Goals
-const goals = [];
-
 // Event listener for setting a financial goal
-document.getElementById('set-goal').addEventListener('click', function() {
+document.getElementById('set-goal').addEventListener('click', function () {
     const goalName = document.getElementById('goal-name').value;
     const goalAmount = parseFloat(document.getElementById('goal-amount').value);
 
-    if (goalName && !isNaN(goalAmount)) {
-        goals.push({ name: goalName, amount: goalAmount });
-        displayGoals();
+    if (goalName && !isNaN(goalAmount) && goalAmount > 0) {
+        financeFacade.setFinancialGoal(goalName, goalAmount);
 
         // Clear input fields
         document.getElementById('goal-name').value = '';
@@ -134,45 +186,14 @@ document.getElementById('set-goal').addEventListener('click', function() {
     }
 });
 
-// Function to display goals in table format
-function displayGoals() {
-    const goalList = document.getElementById('goal-list');
-    goalList.innerHTML = ''; // Clear previous goals
-    goals.forEach(goal => {
-        const tr = document.createElement('tr');
-        const goalNameTd = document.createElement('td');
-        const goalAmountTd = document.createElement('td');
-        goalNameTd.innerText = goal.name;
-        goalAmountTd.innerText = `$${goal.amount.toFixed(2)}`;
-        tr.appendChild(goalNameTd);
-        tr.appendChild(goalAmountTd);
-        goalList.appendChild(tr);
-    });
+// Strategy Pattern for Calculation Methods
+const CalculationStrategy = {
+    simple: (expenses) => expenses.reduce((total, expense) => total + expense, 0),
+    advanced: (expenses) => expenses.reduce((total, expense) => total + expense, 0) * 1.1 // 10% extra for advanced calculation
+};
+
+// Example usage of Strategy Pattern
+function calculateTotalExpenses(strategy) {
+    const expenses = [/* Array of expenses */]; // You would populate this from your actual expense data
+    return CalculationStrategy[strategy](expenses);
 }
-
-// Observer Pattern for budget updates
-class BudgetObserver {
-    constructor(elementId) {
-        this.elementId = elementId;
-    }
-
-    update(budget, totalExpenses) {
-        document.getElementById(this.elementId).innerText = `Budget: $${budget}, Total Expenses: $${totalExpenses}`;
-    }
-}
-
-// Example usage of Observer
-const budgetObserver = new BudgetObserver('budget-info');
-budgetManager.subscribe(budgetObserver);
-
-// Strategy Pattern for budget allocation
-class BudgetAllocationStrategy {
-    allocate(budget, percentage) {
-        return budget * (percentage / 100);
-    }
-}
-
-// Example usage of Strategy
-const strategy = new BudgetAllocationStrategy();
-const allocatedAmount = strategy.allocate(budgetManager.getBudget(), 30); // Allocate 30% of budget
-console.log(`Allocated Amount: $${allocatedAmount.toFixed(2)}`);
