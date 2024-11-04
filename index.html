@@ -7,47 +7,41 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>Personal Finance Manager</h1>
-    </header>
-    <div class="container">
-        <section id="budget-section">
-            <h2>Set Your Budget</h2>
-            <input type="number" id="budget-amount" placeholder="Enter budget amount" required>
-            <button id="set-budget">Set Budget</button>
-            <p>Current Budget: $<span id="current-budget">0</span></p>
-            <p>Remaining Budget: $<span id="remaining-budget">0</span></p>
-        </section>
-        
-        <section id="expense-section">
-            <h2>Add Expense</h2>
-            <input type="text" id="expense-name" placeholder="Expense name" required>
-            <input type="number" id="expense-amount" placeholder="Expense amount" required>
-            <button id="add-expense">Add Expense</button>
-            <h3>Total Expenses: $<span id="total-expenses">0</span></h3>
-            <ul id="expense-list"></ul>
-        </section>
+<h1>Personal Finance Manager</h1>
 
-        <section id="goal-section">
-            <h2>Set Financial Goals</h2>
-            <input type="text" id="goal-name" placeholder="Goal name" required>
-            <input type="number" id="goal-amount" placeholder="Goal amount" required>
-            <button id="set-goal">Set Goal</button>
-            <h3>Current Goals:</h3>
-            <table id="goal-table">
-                <thead>
-                    <tr>
-                        <th>Goal Name</th>
-                        <th>Goal Amount</th>
-                    </tr>
-                </thead>
-                <tbody id="goal-list"></tbody>
-            </table>
-        </section>
-    </div>
-    <footer>
-        <p>&copy; 2024 Personal Finance Manager</p>
-    </footer>
-    <script src="script.js"></script>
+<div>
+    <h2>Set Budget</h2>
+    <input type="number" id="budget-amount" placeholder="Enter budget amount" />
+    <button id="set-budget">Set Budget</button>
+    <p>Current Budget: <span id="current-budget">0</span></p>
+    <p>Remaining Budget: <span id="remaining-budget">0</span></p>
+    <p>Total Expenses: <span id="total-expenses">0</span></p>
+</div>
+
+<div>
+    <h2>Add Expense</h2>
+    <input type="text" id="expense-name" placeholder="Expense name" />
+    <input type="number" id="expense-amount" placeholder="Expense amount" />
+    <button id="add-expense">Add Expense</button>
+    <ul id="expense-list"></ul>
+</div>
+
+<div>
+    <h2>Set Financial Goal</h2>
+    <input type="text" id="goal-name" placeholder="Goal name" />
+    <input type="number" id="goal-amount" placeholder="Goal amount" />
+    <button id="set-goal">Set Goal</button>
+    <table>
+        <thead>
+        <tr>
+            <th>Goal Name</th>
+            <th>Goal Amount</th>
+        </tr>
+        </thead>
+        <tbody id="goal-list"></tbody>
+    </table>
+</div>
+
+<script src="script.js"></script> 
 </body>
 </html>
