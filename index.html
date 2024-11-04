@@ -11,27 +11,26 @@
         <h1>Personal Finance Manager</h1>
     </header>
     <div class="container">
-        <section id="expense-tracking">
-            <h2>Expense Tracking</h2>
-            <input type="text" id="expense-name" placeholder="Expense Name">
-            <input type="number" id="expense-amount" placeholder="Amount">
-            <button id="add-expense">Add Expense</button>
-            <ul id="expense-list"></ul>
-            <p>Total Expenses: <span id="total-expenses">0</span></p>
+        <section id="budget-section">
+            <h2>Set Your Budget</h2>
+            <input type="number" id="budget-amount" placeholder="Enter budget amount" required>
+            <button id="set-budget">Set Budget</button>
+            <p>Current Budget: $<span id="current-budget">0</span></p>
+            <p>Remaining Budget: $<span id="remaining-budget">0</span></p>
         </section>
         
-        <section id="budget-planning">
-            <h2>Budget Planning</h2>
-            <input type="number" id="budget-amount" placeholder="Set Your Budget">
-            <button id="set-budget">Set Budget</button>
-            <p>Current Budget: <span id="current-budget">0</span></p>
-            <p>Remaining Budget: <span id="remaining-budget">0</span></p>
+        <section id="expense-section">
+            <h2>Add Expense</h2>
+            <input type="text" id="expense-name" placeholder="Expense name" required>
+            <input type="number" id="expense-amount" placeholder="Expense amount" required>
+            <button id="add-expense">Add Expense</button>
+            <h3>Total Expenses: $<span id="total-expenses">0</span></h3>
+            <ul id="expense-list"></ul>
         </section>
     </div>
     <footer>
-        <p>&copy; Personal Finance Manager</p>
+        <p>&copy; 2024 Personal Finance Manager</p>
     </footer>
-
     <script src="1.js"></script>
 </body>
 </html>
