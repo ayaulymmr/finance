@@ -27,10 +27,27 @@
             <h3>Total Expenses: $<span id="total-expenses">0</span></h3>
             <ul id="expense-list"></ul>
         </section>
+
+        <section id="goal-section">
+            <h2>Set Financial Goals</h2>
+            <input type="text" id="goal-name" placeholder="Goal name" required>
+            <input type="number" id="goal-amount" placeholder="Goal amount" required>
+            <button id="set-goal">Set Goal</button>
+            <h3>Current Goals:</h3>
+            <table id="goal-table">
+                <thead>
+                    <tr>
+                        <th>Goal Name</th>
+                        <th>Goal Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="goal-list"></tbody>
+            </table>
+        </section>
     </div>
     <footer>
         <p>&copy; 2024 Personal Finance Manager</p>
     </footer>
-    <script src="1.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
